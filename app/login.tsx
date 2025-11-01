@@ -1,7 +1,7 @@
 import { useAuth } from "@/components/context/auth-context";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, ImageBackground, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function LoginScreen() {
     const [username, setUsername] = useState('');
@@ -27,8 +27,9 @@ export default function LoginScreen() {
     }
 
     return (
+        <ImageBackground source={require('../assets/login-background.jpg')} style={styles.background}>
         <View style={styles.container}>
-            <Text>Pantalla de inicio de sesión</Text>
+            <Text style={styles.label}>Pantalla de inicio de sesión</Text>
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Nombre de usuario:</Text>
                 <TextInput style={styles.input} placeholder="Nombre de usuario" autoCapitalize="none" value={username} onChangeText={headleUsernameChange} />
@@ -41,6 +42,7 @@ export default function LoginScreen() {
                 <Text style={styles.buttonText}>Iniciar sesión</Text>
             </Pressable>
         </View>
+        </ImageBackground>
     );
 }
 
@@ -57,6 +59,9 @@ const styles = StyleSheet.create({
     },
     label: {
         marginTop: 8,
+        color: "white",
+        textAlign: "center",
+        fontWeight: "bold",
     },
     input: {
         height: 40,
@@ -66,6 +71,8 @@ const styles = StyleSheet.create({
         marginTop: 8,
         width: '100%',
         borderRadius: 20,
+        backgroundColor: "white",
+        textAlign: "center",
     },
     button: {
         marginTop: 20,
@@ -77,5 +84,10 @@ const styles = StyleSheet.create({
     buttonText: {
         color: "white",
         textAlign: "center",
+    },
+    background: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
     }
 });
