@@ -116,11 +116,6 @@ No hay tests incluidos por defecto. Recomendación:
 - Añadir `jest` o `vitest` para tests unitarios.
 - Empezar con pruebas para `auth-context` y las funciones utilitarias.
 
-## Aportar / Contribuir
-
-- Crea una rama nueva para cada feature o corrección: `feature/mi-cambio`.
-- Haz PRs claros y describe el cambio y el motivo.
-
 ## Licencia
 
 Incluye la licencia que prefieras (por ejemplo, MIT). Este archivo no contiene licencia explícita; añade `LICENSE` si es necesario.
