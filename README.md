@@ -1,50 +1,139 @@
-# Welcome to your Expo app 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# EVA1_DESARROLLO_DE_APLICACIONES_MOVILES
 
-## Get started
+Documentación del proyecto
 
-1. Install dependencies
+Proyecto móvil construido con Expo y TypeScript. Utiliza el enrutamiento basado en archivos (file-based routing) y una estructura modular con pantallas, componentes y contexto de autenticación.
 
-   ```bash
-   npm install
-   ```
+## Tecnologías principales
 
-2. Start the app
+- Expo (React Native)
+- TypeScript
+- ESLint (configuración incluida)
+- Estructura basada en `app/` con enrutamiento por archivos (router)
 
-   ```bash
-   npx expo start
-   ```
+## Requisitos previos
 
-In the output, you'll find options to open the app in a
+Instala lo siguiente en tu máquina de desarrollo:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Node.js (v14+ recomendado)
+- npm o yarn
+- (Opcional) Expo CLI: `npm install -g expo-cli` — no es obligatorio si usas `npx expo`.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Instalación
 
-## Get a fresh project
+1. Clona el repositorio y sitúate en la carpeta del proyecto.
 
-When you're ready, run:
+2. Instala dependencias:
 
 ```bash
-npm run reset-project
+npm install
+# o
+# yarn install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+3. Inicia el servidor de desarrollo de Expo:
 
-## Learn more
+```bash
+npx expo start
+# o si tienes expo-cli global
+# expo start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+En la salida podrás elegir ejecutar en emulador Android, simulador iOS (macOS) o Expo Go.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Estructura del proyecto
 
-## Join the community
+Vista principal del árbol de carpetas (las más relevantes):
 
-Join our community of developers creating universal apps.
+- `app/`
+   - `_layout.tsx` — Layout raíz / proveedor de navegación.
+   - `login.tsx` — Pantalla de login.
+   - `modal.tsx` — Pantalla/modal reutilizable.
+   - `(tabs)/` — Carpeta con pantallas bajo la pestaña principal
+      - `_layout.tsx` — Layout de pestañas.
+      - `explore.tsx` — Pantalla "Explorar".
+      - `index.tsx` — Página principal (home) de las tabs.
+- `components/`
+   - `external-link.tsx` — Componente para enlaces externos.
+   - `haptic-tab.tsx` — Manejo de hápticos al cambiar pestañas.
+   - `context/`
+      - `auth-context.tsx` — Contexto de autenticación (login/logout, estado de usuario).
+   - `ui/`
+      - `icon-symbol.ios.tsx` — Iconografía específica iOS.
+      - `icon-symbol.tsx` — Iconografía común.
+- `assets/` — Imágenes y recursos estáticos (p. ej. `assets/images/`).
+- `constants/`
+   - `theme.ts` — Variables de tema y estilos globales.
+- `scripts/`
+   - `reset-project.js` — Script proporcionado para resetear el proyecto (por el starter de Expo).
+- `app.json`, `tsconfig.json`, `expo-env.d.ts`, `package.json`, `eslint.config.js` — configuraciones del proyecto.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Pantallas y navegación
+
+El proyecto usa el enrutamiento de Expo (file-based routing). Cualquier archivo `.tsx` dentro de `app/` representa una ruta. Los archivos `_layout.tsx` definen layouts y wrappers para rutas hijas.
+
+- `login.tsx`: Pantalla de inicio de sesión. Debería usar `auth-context` para iniciar sesión y persistir el estado.
+- `(tabs)/index.tsx` y `(tabs)/explore.tsx`: Pantallas accesibles desde la navegación por pestañas.
+
+## Componentes y contexto
+
+- `components/context/auth-context.tsx`: Contiene la lógica de autenticación. Revisa este archivo para ver las funciones públicas (p. ej. `signIn`, `signOut`, `user`).
+- `components/ui/*`: Contiene componentes UI reutilizables (íconos, etc.).
+
+## Estilo y tema
+
+Las variables de diseño globales y el tema están en `constants/theme.ts`. Sigue ese archivo para mantener consistencia visual.
+
+## Scripts útiles
+
+Algunos comandos que suelen funcionar en este tipo de proyectos:
+
+```bash
+npm install
+npx expo start
+npm run lint    # si está configurado en package.json
+npm run build   # configuración de build depende de package.json
+node ./scripts/reset-project.js  # reinicia el proyecto según el starter
+```
+
+Consulta `package.json` para ver los scripts exactos disponibles.
+
+## Linting y TypeScript
+
+- El proyecto incluye `tsconfig.json` y `eslint.config.js`. Ejecuta el linter y el compilador de TypeScript desde los scripts definidos en `package.json` si están configurados.
+
+## Consejos de desarrollo
+
+- Lee `components/context/auth-context.tsx` antes de modificar pantallas que dependan del estado de autenticación.
+- Usa el enrutamiento basado en archivos: para añadir una ruta nueva crea un archivo `.tsx` en `app/` o una subcarpeta con su propio `_layout.tsx` si necesitas un layout específico.
+- Mantén los recursos en `assets/images/` y referencia con `import` para asegurar el empaquetado correcto en Expo.
+
+## Pruebas
+
+No hay tests incluidos por defecto. Recomendación:
+
+- Añadir `jest` o `vitest` para tests unitarios.
+- Empezar con pruebas para `auth-context` y las funciones utilitarias.
+
+## Aportar / Contribuir
+
+- Crea una rama nueva para cada feature o corrección: `feature/mi-cambio`.
+- Haz PRs claros y describe el cambio y el motivo.
+
+## Licencia
+
+Incluye la licencia que prefieras (por ejemplo, MIT). Este archivo no contiene licencia explícita; añade `LICENSE` si es necesario.
+
+## Contacto
+
+Si necesitas ayuda con este repositorio, deja un issue o contacta al responsable del proyecto.
+
+---
+
+Resumen: este README ofrece un punto de partida para entender la estructura y cómo ejecutar el proyecto. Si quieres, puedo:
+
+- Añadir comandos exactos tomados de `package.json`.
+- Generar un archivo CONTRIBUTING.md más detallado.
+- Añadir ejemplos de uso de `auth-context` o un diagrama simple de navegación.
+

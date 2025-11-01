@@ -29,7 +29,7 @@ export default function LoginScreen() {
     return (
         <ImageBackground source={require('../assets/login-background.jpg')} style={styles.background}>
         <View style={styles.container}>
-            <Text style={styles.label}>Pantalla de inicio de sesión</Text>
+            <Text style={styles.title}>Pantalla de inicio de sesión</Text>
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Nombre de usuario:</Text>
                 <TextInput style={styles.input} placeholder="Nombre de usuario" autoCapitalize="none" value={username} onChangeText={headleUsernameChange} />
@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
         color: "white",
         textAlign: "center",
         fontWeight: "bold",
+        height: 20,
     },
     input: {
         height: 40,
@@ -89,5 +90,12 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
-    }
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: "bold",
+        color: "white",
+        textAlign: "center",
+        marginBottom: 30,
+    },
 });

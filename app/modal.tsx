@@ -1,14 +1,16 @@
 import { Link } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 
 export default function ModalScreen() {
   return (
+    <ImageBackground source={require('../assets/modal-background.jpg')} style={styles.background}>
     <View style={styles.container}>
       <Text style={styles.title}>Esto es una modal</Text>
       <Link href="/" dismissTo style={styles.link}>
         <Text>Cerrar</Text>
       </Link>
     </View>
+    </ImageBackground>
   );
 }
 
@@ -27,5 +29,10 @@ const styles = StyleSheet.create({
   link: {
     marginTop: 20,
     color: '#007AFF',
+  },
+    background: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
   },
 });

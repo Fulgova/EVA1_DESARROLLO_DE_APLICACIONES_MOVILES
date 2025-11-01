@@ -1,7 +1,7 @@
 import { useAuth } from "@/components/context/auth-context";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function HomeScreen() {
   const [count, setCount] = useState(0);
@@ -18,6 +18,7 @@ export default function HomeScreen() {
   }
 
   return (
+    <ImageBackground source={require('../../assets/login-background.jpg')} style={styles.background}>
     <View style={styles.container}>
 
       {/* Panel principal */}
@@ -49,6 +50,7 @@ export default function HomeScreen() {
       </View>
 
     </View>
+    </ImageBackground>
   );
 }
 
@@ -66,10 +68,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: "bold",
+    color: "white",
   },
   text: {
     fontSize: 18,
     marginBottom: 10,
+    color: "white",
+    textAlign: "center",
+    fontWeight: "bold",
   },
   button: {
     padding: 10,
@@ -81,5 +87,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#FFFFFF",
     textAlign: "center",
+  },
+  background: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
   },
 });
