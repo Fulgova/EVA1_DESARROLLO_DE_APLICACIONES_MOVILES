@@ -1,56 +1,83 @@
 import { useAuth } from "@/components/context/auth-context";
-import { Link, useRouter } from "expo-router";
+import Background from "@/components/ui/background";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import TaskItem from "@/components/ui/task-item";
+import Title from "@/components/ui/tittle";
+import { generateRandomId } from "@/utils/generate-random-id";
 import { useState } from "react";
-import { ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Task } from "../../constants/types";
+
+const initialTodos = [
+  { id: generateRandomId(), title: "Comprar víveres", completed: false },
+  { id: generateRandomId(), title: "Lavar el coche", completed: true },
+  {
+    id: generateRandomId(),
+    title: "Estudiar para el examen",
+    completed: false,
+  },
+];
 
 export default function HomeScreen() {
-  const [count, setCount] = useState(0);
-  const { user, logout } = useAuth();
-  const router = useRouter();
+  const { user } = useAuth();
+  const [todos, setTodos] = useState<Task[]>(initialTodos);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
 
-  const handleIncrement = () => {
-    setCount(count + 1);
-  }
+  const toggleTodo = (id: string) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
 
-  const handleLogout = () => {
-    logout();
-    router.replace('/login');
-  }
+  const removeTodo = (id: string) => {
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+  };
+
+  const addTodo = (title: string) => {
+    if (title.trim() === "") return; // Prevenir agregar tareas vacías
+
+    const newTodo: Task = {
+      id: generateRandomId(),
+      title,
+      completed: false,
+    };
+    setTodos((prevTodos) => [...prevTodos, newTodo]);
+    setNewTaskTitle(""); // Limpiar el campo de entrada después de agregar la tarea
+  };
 
   return (
-    <ImageBackground source={require('../../assets/login-background.jpg')} style={styles.background}>
-    <View style={styles.container}>
-
-      {/* Panel principal */}
-      <View style={styles.section}>
-        <Text style={styles.title}>Panel principal de {user?.name}</Text>
-      </View>
-
-      {/* Contador */}
-      <View style={styles.section}>
-        <Text style={styles.text}>Esto es un contador: {count}</Text>
-        <Pressable style={styles.button} onPress={handleIncrement}>
-          <Text style={styles.buttonText}>Incrementar</Text>
-        </Pressable>
-      </View>
-
-      {/* Modal */}
-      <View style={styles.section}>
-        <Text style={styles.text}>Modal</Text>
-        <Link href="/modal" style={styles.button}>
-          <Text style={styles.buttonText}>Abrir modal</Text>
-        </Link>
-      </View>
-
-      {/* Logout */}
-      <View style={styles.section}>
-        <Pressable style={styles.button} onPress={handleLogout}>
-          <Text style={styles.buttonText}>Cerrar sesión</Text>
-        </Pressable>
-      </View>
-
-    </View>
-    </ImageBackground>
+    <Background source={require("../../assets/background.jpg")}>
+      <SafeAreaView style={styles.container}>
+        {/* Tareas */}
+        <View style={styles.section}>
+          <Title style={{ color: "white" }}>Tareas de {user?.name}</Title>
+          {todos.map((todo) => (
+            <TaskItem
+              key={todo.id}
+              task={todo}
+              onToggle={toggleTodo}
+              onRemove={removeTodo}
+            />
+          ))}
+          <View style={{ height: 16, flexDirection: "row" }} />
+          <TextInput
+            style={styles.input}
+            placeholder="Nueva tarea"
+            placeholderTextColor="gray" // Cambia el color del texto del placeholder
+            value={newTaskTitle}
+            onChangeText={(text) => setNewTaskTitle(text)} // Actualiza el estado cuando el texto cambia
+            onSubmitEditing={() => addTodo(newTaskTitle)} // Agrega la tarea al presionar "Enter"
+            textAlign="center"
+          />
+          <TouchableOpacity onPress={() => addTodo(newTaskTitle)}>
+            <IconSymbol name="plus.circle.fill" size={32} color="green" />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </Background>
   );
 }
 
@@ -65,32 +92,13 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     alignItems: "center",
   },
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "white",
-  },
-  text: {
-    fontSize: 18,
-    marginBottom: 10,
-    color: "white",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  button: {
-    padding: 10,
-    backgroundColor: "#007AFF",
+  input: {
+    width: 220,
+    borderWidth: 1,
+    borderColor: "gray",
     borderRadius: 20,
-    width: 200,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    textAlign: "center",
-  },
-  background: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
+    padding: 8,
+    marginBottom: 12,
+    backgroundColor: "white",
   },
 });
