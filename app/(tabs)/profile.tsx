@@ -1,8 +1,10 @@
 import { useAuth } from "@/components/context/auth-context";
 import Background from "@/components/ui/background";
+import Button from "@/components/ui/button";
 import Title from "@/components/ui/tittle";
 import { useRouter } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
@@ -15,19 +17,17 @@ export default function ProfileScreen() {
 
   return (
     <Background source={require("../../assets/background.jpg")}>
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {/* Panel principal */}
         <View style={styles.section}>
-          <Title>Panel principal de {user?.name}</Title>
+          <Title>Panel de configuración de {user?.name}</Title>
         </View>
 
         {/* Logout */}
         <View style={styles.section}>
-          <Pressable style={styles.button} onPress={handleLogout}>
-            <Text style={styles.buttonText}>Cerrar sesión</Text>
-          </Pressable>
+          <Button type="danger" text="Cerrar sesión" onPress={handleLogout} />
         </View>
-      </View>
+      </SafeAreaView>
     </Background>
   );
 }
@@ -54,16 +54,5 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
     fontWeight: "bold",
-  },
-  button: {
-    padding: 10,
-    backgroundColor: "#007AFF",
-    borderRadius: 20,
-    width: 200,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    textAlign: "center",
   },
 });

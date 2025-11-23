@@ -1,16 +1,11 @@
 import { useAuth } from "@/components/context/auth-context";
 import Background from "@/components/ui/background";
+import Button from "@/components/ui/button";
 import Title from "@/components/ui/tittle";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import {
-  Alert,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
@@ -37,7 +32,7 @@ export default function LoginScreen() {
 
   return (
     <Background source={require("../assets/background.jpg")}>
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <Title>Pantalla de inicio de sesión</Title>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Nombre de usuario:</Text>
@@ -60,10 +55,8 @@ export default function LoginScreen() {
             onChangeText={handlePasswordChange}
           />
         </View>
-        <Pressable style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Iniciar sesión</Text>
-        </Pressable>
-      </View>
+        <Button type="primary" text="Iniciar sesión" onPress={handleLogin} />
+      </SafeAreaView>
     </Background>
   );
 }
@@ -78,6 +71,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: "80%",
     marginTop: 16,
+    alignItems: "center",
   },
   label: {
     marginTop: 10,
@@ -88,24 +82,14 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: "gray",
+    borderColor: "white",
     borderWidth: 1,
     paddingHorizontal: 10,
     marginTop: 8,
-    width: "100%",
+    width: 200,
     borderRadius: 20,
-    backgroundColor: "white",
+    backgroundColor: "rgba(128, 128, 128, 0.5)",
     textAlign: "center",
-  },
-  button: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: "#007AFF",
-    width: "80%",
-    borderRadius: 20,
-  },
-  buttonText: {
     color: "white",
-    textAlign: "center",
   },
 });
