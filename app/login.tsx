@@ -24,7 +24,6 @@ export default function LoginScreen() {
   const handleLogin = () => {
     try {
       login(username, password);
-      router.replace("/(tabs)");
     } catch (error) {
       Alert.alert("Login failed", (error as Error).message);
     }

@@ -1,3 +1,4 @@
+import { useAuth } from "@/components/context/auth-context";
 import { Image } from "expo-image";
 import {
   launchCameraAsync,
@@ -24,6 +25,7 @@ export default function NewTask({ onClose, onTaskSave }: NewTaskProps) {
   const [taskTitle, setTaskTitle] = useState<string>("");
   const [isCapturingPhoto, setIsCapturingPhoto] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const { user } = useAuth();
 
   async function handleTakePhoto() {
     if (isCapturingPhoto) return; // Prevenir múltiples capturas simultáneas
@@ -82,6 +84,7 @@ export default function NewTask({ onClose, onTaskSave }: NewTaskProps) {
         completed: false,
         photoUri: photoUri || undefined,
         coordinates: location || undefined,
+        userId: user ? user.id : "",
       };
 
       onTaskSave(newTask);

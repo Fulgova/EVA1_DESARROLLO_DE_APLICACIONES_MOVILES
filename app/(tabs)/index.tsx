@@ -4,35 +4,45 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import NewTask from "@/components/ui/new-task";
 import TaskItem from "@/components/ui/task-item";
 import Title from "@/components/ui/tittle";
-import { generateRandomId } from "@/utils/generate-random-id";
-import { useState } from "react";
+import { loadTodosFromStorage, saveTodosToStorage } from "@/utils/storage";
+import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Task } from "../../constants/types";
 
-const initialTodos = [
-  { id: generateRandomId(), title: "Comprar víveres", completed: false },
-  { id: generateRandomId(), title: "Lavar el coche", completed: true },
-  {
-    id: generateRandomId(),
-    title: "Estudiar para el examen",
-    completed: false,
-  },
-];
-
 export default function HomeScreen() {
   const { user } = useAuth();
-  const [todos, setTodos] = useState<Task[]>(initialTodos);
+  const [todos, setTodos] = useState<Task[]>([]);
   const [creatingNew, setCreatingNew] = useState<boolean>(false);
+
+  const userTodos = todos.filter(
+    (todo) => todo.userId === (user ? user.id : "")
+  );
+
+  useEffect(() => {
+    if (user) {
+      loadTodosFromStorage().then((loadedTodos) => {
+        setTodos(loadedTodos); // Sincronizar las tareas del almacenamiento
+      });
+    }
+  }, [user]);
 
   const createTask = (task: Task) => {
     if (task.title.trim().length === 0) return; // Prevenir agregar tareas vacías
-    setTodos((prevTodos) => [...prevTodos, task]);
+    setTodos((prevTodos) => {
+      const newTodos = [...prevTodos, task];
+      saveTodosToStorage(newTodos); // Guardar las tareas actualizadas en AsyncStorage
+      return newTodos;
+    });
     setCreatingNew(false);
   };
 
   const removeTodo = (id: string) => {
-    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+    setTodos((prevTodos) => {
+      const updatedTodos = prevTodos.filter((todo) => todo.id !== id);
+      saveTodosToStorage(updatedTodos); // Guardar las tareas actualizadas en AsyncStorage
+      return updatedTodos;
+    });
   };
 
   const handleNewTaskClose = () => {
@@ -50,11 +60,13 @@ export default function HomeScreen() {
   }
 
   const toggleTodo = (id: string) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) =>
+    setTodos((prevTodos) => {
+      const updatedTodos = prevTodos.map((todo) =>
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
+      );
+      saveTodosToStorage(updatedTodos); // Guardar las tareas actualizadas en AsyncStorage
+      return updatedTodos;
+    });
   };
 
   return (
@@ -63,7 +75,7 @@ export default function HomeScreen() {
         {/* Tareas */}
         <View style={styles.section}>
           <Title style={{ color: "white" }}>Tareas de {user?.name}</Title>
-          {todos.map((todo) => (
+          {userTodos.map((todo) => (
             <TaskItem
               key={todo.id}
               task={todo}
