@@ -2,7 +2,6 @@ import { useAuth } from "@/components/context/auth-context";
 import Background from "@/components/ui/background";
 import Button from "@/components/ui/button";
 import Title from "@/components/ui/tittle";
-import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,8 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter();
-  const { login } = useAuth();
+  const { login, loading } = useAuth();
 
   const headleUsernameChange = (text: string) => {
     setUsername(text.toLowerCase());
@@ -34,10 +32,10 @@ export default function LoginScreen() {
       <SafeAreaView style={styles.container}>
         <Title>Pantalla de inicio de sesión</Title>
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Nombre de usuario:</Text>
+          <Text style={styles.label}>Correo:</Text>
           <TextInput
             style={styles.input}
-            placeholder="Nombre de usuario"
+            placeholder="Correo"
             autoCapitalize="none"
             value={username}
             onChangeText={headleUsernameChange}
@@ -54,7 +52,13 @@ export default function LoginScreen() {
             onChangeText={handlePasswordChange}
           />
         </View>
-        <Button type="primary" text="Iniciar sesión" onPress={handleLogin} />
+        <Button
+          type="primary"
+          text="Iniciar sesión"
+          onPress={handleLogin}
+          disabled={!username || !password}
+          loading={loading}
+        />
       </SafeAreaView>
     </Background>
   );

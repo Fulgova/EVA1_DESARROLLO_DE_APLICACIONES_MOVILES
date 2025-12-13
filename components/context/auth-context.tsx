@@ -1,7 +1,7 @@
+import getAuthService from "@/services/auth-service";
 import {
   clearSessionFromStorage,
   loadSessionFromStorage,
-  saveSessionToStorage,
 } from "@/utils/storage";
 import { router } from "expo-router";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -16,12 +16,8 @@ interface AuthContextProps {
   user: User | null;
   login: (username: string, name: string) => void;
   logout: () => void;
+  loading: boolean;
 }
-
-const EXPECTED_USER = [
-  { id: "1", name: "osvaldo", password: "1234" },
-  { id: "2", name: "sebastian", password: "1234" },
-];
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
@@ -31,6 +27,7 @@ export default function AuthProvider({
   children: React.ReactNode;
 }) {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     loadSessionFromStorage().then((loadedUser) => {
@@ -44,22 +41,21 @@ export default function AuthProvider({
     if (user) router.replace("/(tabs)");
   }, [user]);
 
-  const login = (username: string, password: string) => {
-    const foundUser = EXPECTED_USER.find(
-      (u) => u.name === username && u.password === password
-    );
-
-    if (foundUser) {
-      setUser({ id: foundUser.id, name: foundUser.name });
-      saveSessionToStorage({ id: foundUser.id, name: foundUser.name });
-      Alert.alert(
-        "Inicio de sesión exitoso",
-        `Bienvenido de nuevo, ${foundUser.name}!`
-      );
-    } else {
-      throw new Error(
-        "Error al iniciar sesión: nombre de usuario o contraseña incorrectos."
-      );
+  const login = async (username: string, password: string) => {
+    const authClient = getAuthService();
+    setLoading(true);
+    try {
+      const loginResponse = await authClient.login({
+        email: username,
+        password,
+      });
+      const token = loginResponse.data.token;
+      console.log("Login successful, token:", token);
+      Alert.alert("Login Successful", "You have logged in successfully.");
+    } catch (error) {
+      Alert.alert("Login Failed", (error as Error).message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,7 +69,7 @@ export default function AuthProvider({
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
