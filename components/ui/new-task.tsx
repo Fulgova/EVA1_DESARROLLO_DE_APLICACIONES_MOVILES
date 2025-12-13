@@ -73,8 +73,8 @@ export default function NewTask({ onClose, onTaskSave }: NewTaskProps) {
           accuracy: Accuracy.Balanced,
         });
         location = {
-          latitude: locationResult.coords.latitude.toFixed(6),
-          longitude: locationResult.coords.longitude.toFixed(6),
+          latitude: Number(locationResult.coords.latitude.toFixed(6)),
+          longitude: Number(locationResult.coords.longitude.toFixed(6)),
         };
       }
 
@@ -83,7 +83,7 @@ export default function NewTask({ onClose, onTaskSave }: NewTaskProps) {
         title: taskTitle,
         completed: false,
         photoUri: photoUri || undefined,
-        coordinates: location || undefined,
+        location: location || undefined,
         userId: user ? user.id : "",
       };
 

@@ -35,10 +35,9 @@ export default function TaskItem({ task, onToggle, onRemove }: TaskItemProps) {
         <Text style={[styles.title, task.completed && styles.completedTitle]}>
           {task.title}
         </Text>
-        {task.coordinates && (
+        {task.location && (
           <Text style={{ fontSize: 12, color: "white" }}>
-            📍 Lat: {task.coordinates.latitude}, Lon:{" "}
-            {task.coordinates.longitude}
+            📍 Lat: {task.location.latitude}, Lon: {task.location.longitude}
           </Text>
         )}
       </View>

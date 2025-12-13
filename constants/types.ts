@@ -3,9 +3,9 @@ export interface Task {
   title: string;
   completed: boolean;
   userId: string;
-  coordinates?: {
-    latitude: string;
-    longitude: string;
+  location?: {
+    latitude: number;
+    longitude: number;
   };
   photoUri?: string;
 }
