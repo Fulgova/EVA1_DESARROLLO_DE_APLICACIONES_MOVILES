@@ -20,7 +20,7 @@ export default function ProfileScreen() {
       <SafeAreaView style={styles.container}>
         {/* Panel principal */}
         <View style={styles.section}>
-          <Title>Panel de configuración de {user?.name}</Title>
+          <Title>Panel de {user?.email}</Title>
         </View>
 
         {/* Logout */}
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
   section: {
     marginVertical: 20,
     alignItems: "center",
+    textAlign: "center",
   },
   title: {
     fontSize: 22,
