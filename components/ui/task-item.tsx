@@ -7,14 +7,21 @@ interface TaskItemProps {
   task: Task;
   onToggle: (id: string) => void;
   onRemove: (id: string) => void;
+  loading?: boolean;
 }
 
-export default function TaskItem({ task, onToggle, onRemove }: TaskItemProps) {
+export default function TaskItem({
+  task,
+  onToggle,
+  onRemove,
+  loading,
+}: TaskItemProps) {
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={[styles.circle, task.completed && styles.completeCircle]}
         onPress={() => onToggle(task.id)}
+        disabled={loading}
       />
       <View>
         {task.photoUri && (
@@ -43,6 +50,7 @@ export default function TaskItem({ task, onToggle, onRemove }: TaskItemProps) {
       </View>
       <TouchableOpacity
         onPress={() => onRemove(task.id)}
+        disabled={loading}
         style={styles.removeButton}
       >
         <IconSymbol name="trash.circle" size={20} color="red" />

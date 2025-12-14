@@ -21,7 +21,7 @@ export default function getAuthService() {
   const client = axios.create({
     baseURL: `${API_URL}/auth`,
   });
-  console.log("API URL:", `${API_URL}/auth`);
+  //console.log("API URL:", `${API_URL}/auth`);
 
   async function login(loginPayload: LoginPayload): Promise<LoginResponse> {
     try {
@@ -31,11 +31,11 @@ export default function getAuthService() {
       if (isAxiosError(error) && error.response) {
         if (error.response.status === 401) {
           throw new Error(
-            "Invalid credentials. Please check your email and password."
+            "Credenciales inválidas. Por favor, verifica tu email y contraseña."
           );
         }
       }
-      throw new Error("Login failed with status");
+      throw new Error("Error en el inicio de sesión");
     }
   }
 

@@ -1,4 +1,5 @@
 import { useAuth } from "@/components/context/auth-context";
+import getTodoService from "@/services/todo-service";
 import { Image } from "expo-image";
 import {
   launchCameraAsync,
@@ -17,10 +18,10 @@ import Title from "./tittle";
 
 interface NewTaskProps {
   onClose: () => void;
-  onTaskSave: (task: Task) => void;
+  onTaskCreated: () => void;
 }
 
-export default function NewTask({ onClose, onTaskSave }: NewTaskProps) {
+export default function NewTask({ onClose, onTaskCreated }: NewTaskProps) {
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [taskTitle, setTaskTitle] = useState<string>("");
   const [isCapturingPhoto, setIsCapturingPhoto] = useState<boolean>(false);
@@ -86,8 +87,9 @@ export default function NewTask({ onClose, onTaskSave }: NewTaskProps) {
         location: location || undefined,
         userId: user ? user.id : "",
       };
-
-      onTaskSave(newTask);
+      const todoService = getTodoService({ token: user!.token });
+      await todoService.createTodo(newTask);
+      onTaskCreated();
     } catch (error) {
       console.error("Error guardando tarea:", error);
       alert("Error guardando tarea. Por favor, inténtalo de nuevo.");

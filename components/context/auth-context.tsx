@@ -58,7 +58,7 @@ export default function AuthProvider({
         password,
       });
       const token = loginResponse.data.token;
-      console.log("Login successful, token:", token);
+      console.log("Logueo exitoso, token:", token);
       const decodedToken = decodeJwt<JwtPayload>(token);
       const loggedInUser: User = {
         id: decodedToken.sub,
@@ -68,7 +68,7 @@ export default function AuthProvider({
       setUser(loggedInUser);
       await saveSessionToStorage(loggedInUser);
     } catch (error) {
-      Alert.alert("Login Failed", (error as Error).message);
+      Alert.alert("Logueo fallido", (error as Error).message);
     } finally {
       setLoading(false);
     }
@@ -94,7 +94,7 @@ export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error("useAuth debe usarse dentro de un AuthProvider");
   }
 
   return context;

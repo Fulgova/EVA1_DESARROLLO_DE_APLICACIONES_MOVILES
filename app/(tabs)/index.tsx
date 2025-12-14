@@ -5,7 +5,7 @@ import NewTask from "@/components/ui/new-task";
 import TaskItem from "@/components/ui/task-item";
 import Title from "@/components/ui/tittle";
 import getTodoService from "@/services/todo-service";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Task } from "../../constants/types";
@@ -16,38 +16,39 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState<boolean>(false);
   const [creatingNew, setCreatingNew] = useState<boolean>(false);
 
+  const todoService = useMemo(
+    () => (user ? getTodoService({ token: user.token }) : null),
+    [user]
+  );
+
+  const fetchTodos = useCallback(async () => {
+    if (!user || !todoService) return;
+    setLoading(true);
+    try {
+      const response = await todoService.getTodos();
+      setTodos(response.data);
+    } catch (error) {
+      Alert.alert("Error", (error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }, [user, todoService]);
+
   useEffect(() => {
     if (user) {
-      const fetchTodos = async () => {
-        setLoading(true);
-        try {
-          const todoService = getTodoService({ token: user.token });
-          const response = await todoService.getTodos();
-          setTodos(response.data);
-        } catch (error) {
-          Alert.alert("Error", (error as Error).message);
-        } finally {
-          setLoading(false);
-        }
-      };
       fetchTodos();
     }
-  }, [user]);
+  }, [user, fetchTodos]);
 
-  const createTask = (task: Task) => {
-    if (task.title.trim().length === 0) return; // Prevenir agregar tareas vacías
-    setTodos((prevTodos) => {
-      const newTodos = [...prevTodos, task];
-      return newTodos;
-    });
+  const onTaskCreated = () => {
+    fetchTodos();
     setCreatingNew(false);
   };
 
-  const removeTodo = (id: string) => {
-    setTodos((prevTodos) => {
-      const updatedTodos = prevTodos.filter((todo) => todo.id !== id);
-      return updatedTodos;
-    });
+  const removeTodo = async (id: string) => {
+    setLoading(true);
+    await todoService?.deleteTodo(id);
+    await fetchTodos();
   };
 
   const handleNewTaskClose = () => {
@@ -58,19 +59,29 @@ export default function HomeScreen() {
     return (
       <Background source={require("../../assets/background.jpg")}>
         <SafeAreaView style={styles.container}>
-          <NewTask onClose={handleNewTaskClose} onTaskSave={createTask} />
+          <NewTask onClose={handleNewTaskClose} onTaskCreated={onTaskCreated} />
         </SafeAreaView>
       </Background>
     );
   }
 
-  const toggleTodo = (id: string) => {
-    setTodos((prevTodos) => {
-      const updatedTodos = prevTodos.map((todo) =>
+  const toggleTodo = async (id: string) => {
+    setLoading(true);
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) =>
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      );
-      return updatedTodos;
-    });
+      )
+    );
+    const updatedTodos = todos.find((todo) => todo.id === id);
+    if (todoService && updatedTodos !== undefined) {
+      updatedTodos.completed = !updatedTodos.completed;
+      try {
+        await todoService.updateTodo(updatedTodos);
+        await fetchTodos();
+      } catch (error) {
+        Alert.alert("Error", (error as Error).message);
+      }
+    }
   };
 
   return (
@@ -86,6 +97,7 @@ export default function HomeScreen() {
               task={todo}
               onToggle={toggleTodo}
               onRemove={removeTodo}
+              loading={loading}
             />
           ))}
           <TouchableOpacity
@@ -93,6 +105,9 @@ export default function HomeScreen() {
             onPress={() => setCreatingNew(true)}
           >
             <IconSymbol name="plus" size={24} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.newTaskButton} onPress={fetchTodos}>
+            <IconSymbol name="arrow.clockwise" size={24} color="white" />
           </TouchableOpacity>
         </View>
       </SafeAreaView>

@@ -25,6 +25,7 @@ const MAPPING = {
   "trash.circle": "delete",
   "plus.circle.fill": "add-circle",
   plus: "add",
+  "arrow.clockwise": "refresh",
 } as IconMapping;
 
 /**
