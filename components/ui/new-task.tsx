@@ -1,4 +1,5 @@
 import { useAuth } from "@/components/context/auth-context";
+import getImageUploadService from "@/services/image-upload-service";
 import getTodoService from "@/services/todo-service";
 import { Image } from "expo-image";
 import {
@@ -50,7 +51,15 @@ export default function NewTask({ onClose, onTaskCreated }: NewTaskProps) {
       });
 
       if (!result.canceled && result.assets.length > 0) {
-        setPhotoUri(result.assets[0].uri);
+        const uploadService = getImageUploadService({ token: user!.token });
+        const formData = new FormData();
+        formData.append("image", {
+          uri: result.assets[0].uri,
+          name: `photo.jpg`,
+          type: "image/jpeg",
+        } as any);
+        const remoteUrl = await uploadService.uploadImage(formData);
+        setPhotoUri(remoteUrl);
       }
     } catch (error) {
       console.error("Error tomando foto:", error);
