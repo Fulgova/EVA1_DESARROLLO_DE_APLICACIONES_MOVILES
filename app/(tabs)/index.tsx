@@ -5,13 +5,15 @@ import NewTask from "@/components/ui/new-task";
 import TaskItem from "@/components/ui/task-item";
 import Title from "@/components/ui/tittle";
 import getTodoService from "@/services/todo-service";
+import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Task } from "../../constants/types";
 
 export default function HomeScreen() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const router = useRouter();
   const [todos, setTodos] = useState<Task[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [creatingNew, setCreatingNew] = useState<boolean>(false);
@@ -25,14 +27,24 @@ export default function HomeScreen() {
     if (!user || !todoService) return;
     setLoading(true);
     try {
+      //throw new Error("Sin autorización"); // Descomentar para simular error de autorización
       const response = await todoService.getTodos();
       setTodos(response.data);
     } catch (error) {
-      Alert.alert("Error", (error as Error).message);
+      if (
+        error instanceof Error &&
+        error.message.includes("Sin autorización")
+      ) {
+        Alert.alert(
+          "Error, Sesión expirada. Por favor, inicia sesión de nuevo."
+        );
+        logout();
+        router.replace("/login");
+      }
     } finally {
       setLoading(false);
     }
-  }, [user, todoService]);
+  }, [user, todoService, logout, router]);
 
   useEffect(() => {
     if (user) {
